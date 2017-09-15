@@ -1,6 +1,6 @@
 #!/bin/python3
 
-# estimated time, size and speed calculator
+# estimated time, size and speed module
 
 from math import modf,log
 
@@ -29,6 +29,25 @@ expos = {
         'y': 8,
         }
 
+def is_input(inputs):
+    """ is there are inputs? """
+    if inputs:
+        return True
+    else:
+        # no inputs
+        print("Error: no inputs")
+        return False
+
+
+def good_len(itr, length, message):
+    """ check inputs len """
+    if len(itr) < length:
+        # error less than required lenth
+        print(message)
+        return False
+    return True
+
+
 def diu_converter(num, unit):
     """ convert digital information units to bytes """
     # convert all letters in unit to lower case
@@ -53,25 +72,6 @@ def diu_converter(num, unit):
     # convert
     bytes = num * base ** exp
     return bytes, base
-
-
-def is_input(inputs):
-    """ is there are inputs? """
-    if inputs:
-        return True
-    else:
-        # no inputs
-        print("Error: no inputs")
-        return False
-
-
-def good_len(itr, length, message):
-    """ check inputs len """
-    if len(itr) < length:
-        # error less than required lenth
-        print(message)
-        return False
-    return True
 
 
 def time_converter(times):
@@ -162,53 +162,47 @@ def readable_diu(bytes, base):
     readable_diu = str(readable_num) + readable_unit + 'b'
     return readable_diu
 
+
+def check_diu(diu):
+    """ check the user input for diu """
+    # remove all spaces
+    diu = diu.replace(' ', '')
+    # is there are inputs?
+    if not is_input(diu):
+        exit(1)
+    # check inputs len. 3 letters at least
+    if not good_len(diu, 3, "Error: too short input"):
+        exit(1)
+
+    # get first char
+    first_cahr = 0
+    for i, char in enumerate(diu):
+        if char.isalpha():
+            # if the first char is alpha
+            if i < 1:
+                print("Error: the letter", char, "can't be first letter")
+                exit(1)
+            first_char = i
+            break
+
+    # get num and unit
+    if first_char < 1:
+        # error
+        print("Error: no unit found")
+        exit(1)
+    num = int(diu[:first_char])
+    unit = diu[first_char:]
+
+    # check unit it must be less than or equal 3 chars and last char is b
+    if len(unit) > 3 and unit[-1] != 'b':
+        # unknow unit
+        print("Error: unkown unit", unit)
+        exit(1)
+    # if input is okay return num and unit
+    return num, unit
+
 """
-times = input("Please enter time: ")
-if not is_input(times):
-    exit(1)
-seconds = time_converter(times)
-if seconds:
-    print("seconds =", seconds, '\n', seconds_to_time(seconds))
-"""
-
-diu = input("Please enter size: ")
-
-# remove all spaces
-diu = diu.replace(' ', '')
-# is there are inputs?
-if not is_input(diu):
-    exit(1)
-# check inputs len. 3 letters at least
-if not good_len(diu, 3, "Error: too short input"):
-    exit(1)
-
-# get first char
-first_cahr = 0
-for i, char in enumerate(diu):
-    if char.isalpha():
-        # if the first char is alpha
-        if i < 1:
-            print("Error: the letter", char, "can't be first letter")
-            exit(1)
-        first_char = i
-        break
-
-# get num and unit
-if first_char < 1:
-    # error
-    print("Error: no unit found")
-    exit(1)
-num = int(diu[:first_char])
-unit = diu[first_char:]
-
-# check unit it must be less than or equal 3 chars and last char is b
-if len(unit) > 3 and unit[-1] != 'b':
-    # unknow unit
-    print("Error: unkown unit", unit)
-    exit(1)
-
-bytes, base = diu_converter(num, unit)
 # check that bytes is not 0 and not false
 if not bytes:
     exit(1)
-print(bytes, '=', readable_diu(bytes, base))
+"""
