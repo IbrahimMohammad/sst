@@ -1,0 +1,56 @@
+#!/bin/python3
+
+# estimated time, size and speed calculator
+
+from sst import *
+
+def process_diu_inputs(diu):
+    """ process digital information units: check then convert"""
+    num, unit = check_diu(diu)
+    bytes_in_diu, diu_base = diu_converter(num, unit)
+    return bytes_in_diu, diu_base
+
+user_choice = input(
+    "what you want to calculate:\n\ttime = t\n\tsize = s\n\tspeed = sp\n"
+    )
+# user want time
+if user_choice == 't':
+    # get inputs
+    size = input("size = ")
+    speed = input("speed = ")
+    # process the size: check and convert to bytes
+    bytes_in_size = process_diu_inputs(size)[0]
+    # process the speed check and convert to bytes
+    bytes_in_speed = process_diu_inputs(speed)[0]
+    # calculate the time and convert to readable time
+    seconds = bytes_in_size / bytes_in_speed
+    time = seconds_to_time(seconds)
+    print(time)
+# user want size
+elif user_choice == 's':
+    time = input("time = ")
+    speed = input("speed = ")
+    # process the time
+    seconds_in_time = time_converter(time)
+    # process the speed
+    bytes_in_speed, base = process_diu_inputs(speed)
+    # calculate the size
+    size_as_bytes = seconds_in_time * bytes_in_speed
+    size = readable_diu(size_as_bytes, base)
+    print(size)
+#user want speed
+elif user_choice == 'sp':
+    time = input("time = ")
+    size = input("size = ")
+    # process the time
+    seconds_in_time = time_converter(time)
+    # process the size
+    bytes_in_speed, base = process_diu_inputs(size)
+    # calculate the speed
+    speed_as_bytes = bytes_in_speed / seconds_in_time
+    speed = readable_diu(speed_as_bytes, base)
+    print(speed)
+# anything else
+else:
+    print("Error: unkown choice")
+    exit(1)
